@@ -79,9 +79,10 @@ function createRuleLine(ruleset) {
 
 /**
  * Create the list of rules for a specific tab
- * @param tab
+ * @param tabArray
  */
-function gotTab(tab) {
+function gotTab(tabArray) {
+  var tab = tabArray[0];
   var rulesets = backgroundPage.activeRulesets.getRulesets(tab.id);
 
   for (var r in rulesets) {
@@ -105,7 +106,7 @@ function gotTab(tab) {
 document.addEventListener("DOMContentLoaded", function () {
   stableRules = document.getElementById("StableRules");
   unstableRules = document.getElementById("UnstableRules");
-  chrome.tabs.getSelected(null, gotTab);
+  chrome.tabs.query({active:true, currentWindow:true}, gotTab);
 
   // Print the extension's current version.
   var the_manifest = chrome.runtime.getManifest();
