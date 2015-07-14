@@ -167,12 +167,22 @@ var domainBlacklist = {};
 // TODO: Remove this code if they ever give us a real counter
 var redirectCounter = {};
 
+// The user manually disabled HTTPSe on these tabs.
+var ignoredTabs = {};
+
 /**
  * Called before a HTTP(s) request. Does the heavy lifting
  * Cancels the request/redirects it to HTTPS. URL modification happens in here.
  * @param details of the handler, see Chrome doc
  * */
 function onBeforeRequest(details) {
+  if (details.tabId in ignoredTabs) {
+    // The user disabled the extension for this tab.
+    console.log('ignoring -- tab disabled');
+    console.log(ignoredTabs);
+    return;
+  }
+
   var uri = document.createElement('a');
   uri.href = details.url;
 

@@ -2,6 +2,7 @@
 var backgroundPage = chrome.extension.getBackgroundPage();
 var stableRules = null;
 var unstableRules = null;
+var tabId;
 var hostReg = /.*\/\/[^$/]*\//;
 
 function e(id) {
@@ -83,6 +84,7 @@ function createRuleLine(ruleset) {
  */
 function gotTab(tabArray) {
   var tab = tabArray[0];
+  tabId = tab.id;
   var rulesets = backgroundPage.activeRulesets.getRulesets(tab.id);
 
   for (var r in rulesets) {
@@ -100,6 +102,14 @@ function gotTab(tabArray) {
   }
 }
 
+function toggleTabIgnore(a) {
+  if (tabId in backgroundPage.ignoredTabs) {
+    delete backgroundPage.ignoredTabs[tabId];
+  } else {
+    backgroundPage.ignoredTabs[tabId] = true;
+  }
+}
+
 /**
  * Fill in content into the popup on load
  */
@@ -112,6 +122,10 @@ document.addEventListener("DOMContentLoaded", function () {
   var the_manifest = chrome.runtime.getManifest();
   var version_info = document.getElementById('current-version');
   version_info.innerText = the_manifest.version;
+
+  // Get info if the tab is disabled
+  var toggleThisTab = document.getElementById('toggle');
+  toggleThisTab.addEventListener('click', toggleTabIgnore, false);
 
   // Set up toggle checkbox for HTTP nowhere mode
   getOption_('httpNowhere', false, function(item) {
