@@ -7,7 +7,7 @@
 # currently a very literal translation of merge-rulesets.sh, but about five
 # times faster
 from __future__ import print_function
-
+pass
 import os
 from glob import glob
 from subprocess import call
@@ -15,7 +15,7 @@ import sys
 import traceback
 import re
 import unicodedata
-import IPython
+
 
 def normalize(f):
     """
@@ -79,15 +79,7 @@ for rfile in sorted(xml_ruleset_files):
   ruleset = open(rfile).read()
   fn = os.path.basename(rfile)
   ruleset = ruleset.replace("<ruleset", '<ruleset f="%s"' % fn, 1)
-  #library.write(clean_up(ruleset))
-  cleaned_ruleset = clean_up(ruleset)
-  library.write(cleaned_ruleset)
-  # For Chrome
-  if 'rule from="^https' in cleaned_ruleset:
- # <target host="perfectaudience.com" />
- #   IPython.embed()
-#    targets_in_this_ruleset = re.match('', cleaned_ruleset)
-    print(ruleset)
+  library.write(clean_up(ruleset))
 library.write("</rulesetlibrary>\n")
 library.close()
 
