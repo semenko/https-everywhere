@@ -10,8 +10,15 @@ function log(){};
  */
 function Rule(from, to) {
   //this.from = from;
-  this.to = to;
-  this.from_c = new RegExp(from);
+  if (from === "^http:" && to === "https:") {
+    // This is a trivial rule, rewriting http->https with no complex RegExp.
+    this.to = null;
+    this.from_c = null;
+  } else {
+    // This is a non-trivial rule.
+    this.to = to;
+    this.from_c = new RegExp(from);
+  }
 }
 
 /**
@@ -77,8 +84,22 @@ RuleSet.prototype = {
 
     // Okay, now find the first rule that triggers
     for(var i = 0; i < this.rules.length; ++i) {
-      returl = urispec.replace(this.rules[i].from_c,
-                               this.rules[i].to);
+      // Null to & from_c means this is a "trivial rule"
+      if (this.rules[i].to == null && this.rules[i].from_c === null) {
+        // TODO: Remove this if we stop listening on HTTPS: urls.
+        if (urispec.substring(0, 6) === "https:") {
+          // A trivial rule won't change an already HTTPS url, but
+          // we can't return yet, since a regex in this.rules[] may apply.
+          continue;
+        }
+        // We must be http:, since we only listen on http & https
+        // Just convert to https since this is a simple rule
+        return "https://" + urispec.substring(7);
+      }
+
+      // We're not a simple rule, so try to apply a RegExp
+      returl = urispec.replace(this.rules[i].from_c, this.rules[i].to);
+
       if (returl != urispec) {
         return returl;
       }
