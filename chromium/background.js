@@ -460,7 +460,7 @@ function switchPlannerDetailsHtmlSection(tab_id, rewritten) {
  * */
 function onCookieChanged(changeInfo) {
   if (!changeInfo.removed && !changeInfo.cookie.secure) {
-    if (all_rules.shouldSecureCookie(changeInfo.cookie, false)) {
+    if (all_rules.shouldSecureCookie(changeInfo.cookie)) {
       var cookie = {name:changeInfo.cookie.name,
                     value:changeInfo.cookie.value,
                     path:changeInfo.cookie.path,
